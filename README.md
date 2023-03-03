@@ -13,8 +13,8 @@ For WINDOWS users - you have to install MAKE by your own.
 
 ## How to use it
 
-Run `make start_local` to start REST API. All containers will start automatically.
+Run `make start_local` to start server. All containers will start automatically.
 
 ## How to stop it
 
-Run `make stop_local` to stop REST API. All containers will stop automatically.
+Run `make stop_local` to stop server. All containers will stop automatically.
