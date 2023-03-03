@@ -12,6 +12,9 @@ services:
       - ./postgres-data:/var/lib/postgresql/data
     ports:
       - '5432:5432'
+    networks:
+      - proxynet
+
   php-apache:
     container_name: php-apache
     build:
@@ -23,3 +26,9 @@ services:
       - ./apache/default.conf:/etc/apache2/sites-enabled/000-default.conf
     depends_on:
       - database
+    networks:
+      - proxynet
+
+networks:
+  proxynet:
+    name: rss_network
