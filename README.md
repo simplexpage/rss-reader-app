@@ -13,8 +13,17 @@ For WINDOWS users - you have to install MAKE by your own.
 
 ## How to use it
 
-Run `make start_local` to start server. All containers will start automatically.
+Run `make start` to start server. All containers will start automatically.
+If you start it first time, you have to run `make migration_db` to migrate database and `make start_queue` to start background queue.
+
+## Migration database
+
+Run `make migration_db` to migrate database.
+
+## Start queue after start
+
+Run `make start_queue` to start background queue.
 
 ## How to stop it
 
-Run `make stop_local` to stop server. All containers will stop automatically.
+Run `make stop` to stop server. All containers will stop automatically.
