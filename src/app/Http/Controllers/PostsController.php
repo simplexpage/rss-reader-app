@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Jobs\ProcessParseUrls;
 use App\Models\Feed;
 use App\Models\Posts;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Config;
 
 class PostsController extends Controller
 {
@@ -17,8 +15,7 @@ class PostsController extends Controller
      */
     public function index()
     {
-        $posts = Posts::orderBy('id','desc')->paginate(20);
-        return view('posts.index', compact('posts'));
+        return view('posts.index');
     }
 
     /**
@@ -29,7 +26,7 @@ class PostsController extends Controller
      */
     public function show(Posts $post)
     {
-        return view('posts.show',compact('post'));
+        return view('posts.view',compact('post'));
     }
 
     public function parse()
