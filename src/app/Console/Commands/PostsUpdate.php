@@ -2,7 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Feed;
+use App\Models\Posts;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Http;
 
 class PostsUpdate extends Command
 {
@@ -28,7 +31,6 @@ class PostsUpdate extends Command
     public function handle()
     {
         $this->info('Updating posts from feeds...');
-
         $this->info('Done!');
         return Command::SUCCESS;
     }

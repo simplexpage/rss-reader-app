@@ -38,7 +38,6 @@ class FeedController extends Controller
         $request->validate([
             'name' => 'required',
             'url' => 'required|url|unique:feeds',
-            'update_frequency_second' => 'required|integer',
             'status' => 'required|integer',
         ]);
 
@@ -80,7 +79,6 @@ class FeedController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'update_frequency_second' => 'required|integer',
             'status' => 'required|integer',
         ]);
 

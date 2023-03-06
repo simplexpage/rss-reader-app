@@ -4,25 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Http;
 
 class Feed extends Model
 {
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 0;
 
-    const UPDATE_FREQUENCY_DEFAULT = 0;
-    const UPDATE_FREQUENCY_MINUTE = 60;
-    const UPDATE_FREQUENCY_10_MINUTE = 600;
-    const UPDATE_FREQUENCY_HOUR = 3600;
-    const UPDATE_FREQUENCY_DAY = 86400;
-
-
     use HasFactory;
 
     protected $fillable = [
         'name',
         'url',
-        'update_frequency_second',
         'status',
     ];
 
@@ -40,22 +34,59 @@ class Feed extends Model
         return $status[$this->status];
     }
 
-    public static function getArrayUpdateFrequency()
+    // Parse feeds from urls
+    public static function parseUrls($feedsUrlArray, $feedsUpdatedAtArray)
     {
-        return [
-            self::UPDATE_FREQUENCY_DEFAULT => 'No update',
-            self::UPDATE_FREQUENCY_MINUTE => '1 minute',
-            self::UPDATE_FREQUENCY_10_MINUTE => '10 minute',
-            self::UPDATE_FREQUENCY_HOUR => '1 hour',
-            self::UPDATE_FREQUENCY_DAY => '1 day',
+        $infoArray = [
+            'status' => 'error',
+            'message' => 'Error parse feeds.',
         ];
+        // Check if $feedsUrlArray is empty
+        if (empty($feedsUrlArray)) {
+            $infoArray['message'] = 'Empty url feeds array.';
+            return $infoArray;
+        }
+        // Check if feedsUpdatedAtArray is empty
+        if (empty($feedsUpdatedAtArray)) {
+            $infoArray['message'] = 'Empty feeds array.';
+            return $infoArray;
+        }
+        // feedsArray to json { "urls": ["url1", "url2"] }
+        $feedsJson = json_encode(['urls' => $feedsUrlArray]);
+        // Create post request json to parse feeds from url
+        $request = Http::withBody($feedsJson, 'application/json')
+            ->withHeaders([
+                'Content-Type' => 'application/json',
+            ])
+            ->post(Config::get('app.parser_reader_url'));
+        // Get status code from parse feeds
+        if ($request->status() != 200) {
+            $infoArray['message'] = 'Error parse feeds.';
+            return $infoArray;
+        }
+        // Get response from parse feeds
+        $response = json_decode($request->getBody()->getContents(), true);
+        if (empty($response['data']['items'])) {
+            $infoArray['message'] = 'Empty response from parse feeds.';
+            return $infoArray;
+        }
+        // Save response to Posts table
+        foreach ($response['data']['items'] as $item) {
+            if ($feedUpdateAt = $feedsUpdatedAtArray[$item['source_url']]) {
+                if ($item['publish_date'] > $feedUpdateAt->toDateTimeString()) {
+                    Posts::create([
+                        'title' => $item['title'],
+                        'source' => $item['source'],
+                        'source_url' => $item['source_url'],
+                        'description' => $item['description'],
+                        'link' => $item['link'],
+                        'pub_date' => $item['publish_date'],
+                    ]);
+                }
+            }
+        }
+        $infoArray['status'] = 'success';
+        $infoArray['message'] = 'Feeds parsed successfully.';
+        return $infoArray;
     }
-
-    public function getUpdateFrequency()
-    {
-        $updateFrequency = self::getArrayUpdateFrequency();
-        return $updateFrequency[$this->update_frequency_second];
-    }
-
-
 }

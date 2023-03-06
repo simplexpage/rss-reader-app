@@ -1,12 +1,12 @@
-start_local:
+start:
 	docker-compose up
 
-start_local_rebuild:
+rebuild:
 	docker-system prune
 	docker-compose up --build
 
-stop_local:
+stop:
 	docker-compose down
 
-console_php_local:
+console_php:
 	docker-compose exec php-apache /bin/bash

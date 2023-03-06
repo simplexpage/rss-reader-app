@@ -17,6 +17,8 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    'parser_reader_url' => env('PARSE_READER_URL', 'http://go_rss_reader:8082/reader/parse'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

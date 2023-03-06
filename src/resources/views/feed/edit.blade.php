@@ -49,21 +49,6 @@
             </div>
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
-                    <strong>Frequency:</strong>
-                    <select class="form-control" name="update_frequency_second">
-                        @foreach (\App\Models\Feed::getArrayUpdateFrequency() as $key => $value)
-                            <option value="{{ $key }}" {{$feed->update_frequency_second == $key ? 'selected="selected"' : ''}}>
-                                {{ $value }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('update_frequency_second')
-                    <div class="alert alert-danger mt-1 mb-1">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
-            <div class="col-xs-12 col-sm-12 col-md-12">
-                <div class="form-group">
                     <strong>Status:</strong>
                     <select class="form-control" name="status">
                         @foreach (\App\Models\Feed::getArrrayStatus() as $key => $value)

@@ -17,7 +17,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('url')->unique();
-            $table->integer('update_frequency_second')->nullable();
             $table->tinyInteger('status');
             $table->timestamps();
         });

@@ -28,7 +28,6 @@
             <th>ID</th>
             <th>Name</th>
             <th>Url</th>
-            <th>Frequency</th>
             <th>UpdateAt</th>
             <th>Status</th>
             <th width="280px">Action</th>
@@ -40,7 +39,6 @@
                 <td>{{ $feed->id }}</td>
                 <td>{{ $feed->name }}</td>
                 <td>{{ $feed->url }}</td>
-                <td>{{ $feed->getUpdateFrequency() }}</td>
                 <td>{{ $feed->updated_at }}</td>
                 <td>{{ $feed->getStatus() }}</td>
                 <td>
