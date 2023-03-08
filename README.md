@@ -16,7 +16,8 @@ For WINDOWS users - you have to install MAKE by your own.
 Run `make start` to start server. All containers will start automatically.
 
 ## How to start it first time
-If you start it first time, you have to create .env file from .env.example and run `make migration_db` to migrate database and `make start_queue` to start background queue.
+If you start it first time, you have to create `.env` file from `.env.example` in src folder.
+Then you have to run `make start` to start server in root folder and run `make migration_db` to migrate database and `make start_queue` to start background queue.
 
 ## Migration database
 

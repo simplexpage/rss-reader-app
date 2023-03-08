@@ -67,9 +67,4 @@ class PostsTableView extends TableView
         ];
     }
 
-    public function repository(): Builder
-    {
-        return Posts::query();
-    }
-
 }

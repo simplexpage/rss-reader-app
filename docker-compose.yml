@@ -5,9 +5,9 @@ services:
     image: postgres:10.1-alpine
     container_name: reader_app_db
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: rss_reader
+      POSTGRES_PASSWORD: rss_reader
+      POSTGRES_DB: rss_reader
     volumes:
       - reader_postgres_data:/var/lib/postgresql/data/
     ports:
@@ -20,14 +20,14 @@ services:
     build:
       context: ./php
     ports:
-      - ${HTTP_READER_PORT}:80
+      - 8080:80
     volumes:
       - ./src:/var/www/rss_reader_docker
       - ./apache/default.conf:/etc/apache2/sites-enabled/000-default.conf
     depends_on:
       - db_reader
     links:
-      - ${DB_HOST}:db_reader
+      - db_reader:db_reader
     networks:
       - proxynet
 
