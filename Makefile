@@ -1,6 +1,9 @@
 start:
 	docker-compose up
 
+composer_install:
+	docker-compose run --rm php_apache_reader bash -c "composer install"
+
 migration_db:
 	docker-compose run --rm php_apache_reader bash -c "php artisan migrate"
 
