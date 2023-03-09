@@ -1,5 +1,5 @@
 start:
-	docker-compose up
+	docker-compose --env-file ./src/.env up
 
 composer_install:
 	docker-compose run --rm php_apache_reader bash -c "composer install"
