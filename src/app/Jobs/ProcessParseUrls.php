@@ -14,17 +14,15 @@ class ProcessParseUrls implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $feedsUrlArray;
-    protected $feedsUpdatedAtArray;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($feedsUrlArray, $feedsUpdatedAtArray)
+    public function __construct($feedsUrlArray)
     {
         $this->feedsUrlArray = $feedsUrlArray;
-        $this->feedsUpdatedAtArray = $feedsUpdatedAtArray;
     }
 
     /**
@@ -34,6 +32,6 @@ class ProcessParseUrls implements ShouldQueue
      */
     public function handle()
     {
-        Feed::parseUrls($this->feedsUrlArray, $this->feedsUpdatedAtArray);
+        Feed::parseUrls($this->feedsUrlArray);
     }
 }

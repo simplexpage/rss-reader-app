@@ -14,6 +14,8 @@ For WINDOWS users - you have to install MAKE by your own.
 ## How to see it
 
 `http://localhost:8080/` - to see the app in browser.
+1) Posts `http://localhost:8080/posts` - to see the post.
+2) Button `Get new post` - to get new post from RSS feed. Job will be added to queue. Then you have to refresh page to see new post.
 
 ## How to use it
 

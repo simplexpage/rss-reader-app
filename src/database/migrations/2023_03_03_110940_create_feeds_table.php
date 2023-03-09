@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('url')->unique();
+            $table->timestamp('last_update')->nullable();
             $table->tinyInteger('status');
             $table->timestamps();
         });

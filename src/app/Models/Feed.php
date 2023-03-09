@@ -17,6 +17,7 @@ class Feed extends Model
     protected $fillable = [
         'name',
         'url',
+        'last_update',
         'status',
     ];
 
@@ -35,7 +36,7 @@ class Feed extends Model
     }
 
     // Parse feeds from urls
-    public static function parseUrls($feedsUrlArray, $feedsUpdatedAtArray)
+    public static function parseUrls($feedsUrlArray)
     {
         $infoArray = [
             'status' => 'error',
@@ -46,13 +47,9 @@ class Feed extends Model
             $infoArray['message'] = 'Empty url feeds array.';
             return $infoArray;
         }
-        // Check if feedsUpdatedAtArray is empty
-        if (empty($feedsUpdatedAtArray)) {
-            $infoArray['message'] = 'Empty feeds array.';
-            return $infoArray;
-        }
+        $urls = array_keys($feedsUrlArray);
         // feedsArray to json { "urls": ["url1", "url2"] }
-        $feedsJson = json_encode(['urls' => $feedsUrlArray]);
+        $feedsJson = json_encode(['urls' => $urls]);
         // Create post request json to parse feeds from url
         $request = Http::withBody($feedsJson, 'application/json')
             ->withHeaders([
@@ -70,20 +67,43 @@ class Feed extends Model
             $infoArray['message'] = 'Empty response from parse feeds.';
             return $infoArray;
         }
+        $feedsUrlUpdateArray = $feedsUrlArray;
         // Save response to Posts table
         foreach ($response['data']['items'] as $item) {
-            if ($feedUpdateAt = $feedsUpdatedAtArray[$item['source_url']]) {
-                if ($item['publish_date'] > $feedUpdateAt->toDateTimeString()) {
-                    Posts::create([
-                        'title' => $item['title'],
-                        'source' => $item['source'],
-                        'source_url' => $item['source_url'],
-                        'description' => $item['description'],
-                        'link' => $item['link'],
-                        'pub_date' => $item['publish_date'],
-                    ]);
+            $isUpdate = false;
+            $feedLastUpdate = $feedsUrlArray[$item['source_url']];
+            if ($feedLastUpdate == null) {
+                $isUpdate = true;
+                if ($feedsUrlUpdateArray[$item['source_url']] == null) {
+                    $feedsUrlUpdateArray[$item['source_url']] = $item['publish_date'];
+                } else {
+                    if ($item['publish_date'] > $feedsUrlUpdateArray[$item['source_url']]) {
+                        $feedsUrlUpdateArray[$item['source_url']] = $item['publish_date'];
+                    }
+                }
+            } else {
+                if ($item['publish_date'] > $feedLastUpdate) {
+                    $isUpdate = true;
+                    if ($item['publish_date'] > $feedsUrlUpdateArray[$item['source_url']]) {
+                        $feedsUrlUpdateArray[$item['source_url']] = $item['publish_date'];
+                    }
                 }
             }
+            if ($isUpdate) {
+                Posts::create([
+                    'title' => $item['title'],
+                    'source' => $item['source'],
+                    'source_url' => $item['source_url'],
+                    'description' => $item['description'],
+                    'link' => $item['link'],
+                    'pub_date' => $item['publish_date'],
+                ]);
+            }
+        }
+        // Update feeds last_update
+        foreach ($feedsUrlUpdateArray as $url => $lastUpdate) {
+            Feed::where('url', $url)
+                ->update(['last_update' => $lastUpdate]);
         }
         $infoArray['status'] = 'success';
         $infoArray['message'] = 'Feeds parsed successfully.';

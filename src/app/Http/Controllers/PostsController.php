@@ -33,7 +33,7 @@ class PostsController extends Controller
     {
         // Select feeds from Feed table where status = active
         $feeds = Feed::where('status', Feed::STATUS_ACTIVE)
-            ->select('url','updated_at')
+            ->select('url','last_update')
             ->get();
 
         // If feeds is empty return
@@ -42,13 +42,11 @@ class PostsController extends Controller
         }
 
         // Get feeds url array
-        $feedsUrlArray = $feeds->pluck('url')->toArray();
-        // Get feeds updated_at array
-        $feedsUpdatedAtArray = $feeds->pluck('updated_at','url')->toArray();
+        $feedsUrlArray = $feeds->pluck('last_update','url')->toArray();
 
-        ProcessParseUrls::dispatch($feedsUrlArray, $feedsUpdatedAtArray);
+        ProcessParseUrls::dispatch($feedsUrlArray);
 
-        return redirect()->route('posts.index')->with('success','Posts added to queue successfully.');
+        return redirect()->route('posts.index')->with('success','Posts added to queue successfully. Refresh page to see new posts.');
     }
 
 }
